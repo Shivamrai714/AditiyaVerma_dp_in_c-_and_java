@@ -1,0 +1,3160 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+
+// REFER FROM THE BOTTOM OF THE FILE .....1 ,2,3,4,  .... 
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*   // dp 31
+//Egg dropping problem.
+
+//Task is to find the Minimun no of attempts , to find the critical floor.
+int t[1001][1001];
+
+int solve(int e, int f)
+{
+
+// base condition : when floor is 1 or 0 , then attemts will be equal floor
+// when 1 egg is given , then need to check it from the very first floor and keep on checking till we reach critical floor, hence  answer is floor itself.
+
+if( e==1 || f==0 || f==1) return f;
+
+//check if present in matrix or not
+if(t[e][f] != -1 )
+return t[e][f];
+
+//Now we will try to break egg from every possible pos of floor and recursiely finding the minimum attempts using the eggs available.
+int high,low;
+int attempt=INT_MAX;
+for(int k=1;k<=f;k++)        //try to fall from all nodes.
+{              // 1 attempt
+ 
+
+ //  int temp_ans= 1 +  
+ //                max( solve(e-1,k-1)      //egg broken at current floor
+ //                 ,solve(e,f-k)        // not break , check at upper floors
+ //                   );
+
+//More optimization is done to remove the internal recurive calls.
+
+
+
+
+//check if low part is present in matrix 
+    if(t[e-1][k-1]!=-1)       // yes present
+        low=t[e-1][k-1];
+    else{
+        low= solve(e-1,k-1);
+        t[e-1][k-1]=low;
+    }
+
+// check the high part.
+ 
+ if(t[e][f-k] !=-1 )  high=t[e][f-k];
+ else
+ {
+    high= solve(e,f-k);
+     t[e][f-k]=high;
+ }    
+
+
+
+// Now make the calls to the fucntion :
+
+ int temp_ans= 1+ max( low,high );       // max is used , because we consider that the critical floor will be the worst possible ,  so take the max attempts from the subcalls . eg at floor 5 we through egg and about it has 6 more floors , then outof two subcalls for low 4 floor and high 6 floor , we take  result of 6 floor, as we consider the critical floor is worst possible (may be last one )
+
+
+attempt=min(attempt,temp_ans);      // Here we took min, out of all possible answers from choosing the postion for trying the egg break .  ( k )
+
+}
+
+return t[e][f]=attempt;
+
+
+}
+
+int main()
+{
+  memset(t,-1,sizeof(t));
+
+   int e=2  , f=10  ;      // 3 ,5  op:3          // 2 , 10    o/p: 4
+
+   cout<<"Find the minimum no of attempts , in worst case to find the critical floor ";
+
+   int ans=solve(e,f);
+
+cout<<"minimum attemps are  : "<<ans;
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+// dp 30
+//Scramble Strings  :  To scramble the string, we may choose any non-leaf node and swap its two children.
+
+// eg  gr eat  -->   rg eat      , swapped  g,r childs of gr 
+//             -->   rg tae   
+
+//function to check the scrable strings.
+
+unordered_map<string,bool>mp;
+
+bool solve(string a, string b)
+{
+
+// base case : if string becomes equal then, yes scrable string
+    if(a.compare(b)==0) return true;
+
+// leaf node is reached via checking childs , if last ele reached and not equal,as check above using compare(), then return false.
+    if(a.size()<=1) return false;
+
+
+bool flag=false;
+
+string key=a;
+key+=" ";
+key+=b;
+
+//search the key in the map
+if(mp.find(key) != mp.end() )
+{
+return mp[key];
+}
+
+
+//Now we will try to partition the string into two child , at each possible position using the loop of k , and recursively check if they are scrable or not.
+//The two cases can be :
+//a child are swapped :  we will compare the left child with the right child , right child with the left child.  of two string
+//b) if no swapping  : we will check the left child with left child and right child with right child , of the two strings
+// If any of the cases are true , we can they are scrable string .
+
+
+// starting cheking the left and right childs from k=1,  to k=n-1 position : as left,or right childs can't be empty (given constraints)
+
+// 1 . child swapped         // substr(start , leg)
+
+int n=a.length();
+
+for(int k=1 ; k<=n-1 ; k++)
+{
+//case 1 : Swapping in child
+          //left of string  a  with right  part of b                  //right part of a       with left part of b string
+if(
+    ((solve( a.substr(0,k) ,  b.substr(n-k,k) )== true)  &&    (solve (a.substr(k,n-k) , b.substr(0,n-k)) ==true ) )
+
+    ||  
+//case 2 : No swapping  
+      // left of a with left of b                    // right part of both are same
+    ((solve( a.substr(0,k)  , b.substr(0,k))==true)   &&   (solve( a.substr(k,n-k)  , b.substr(k,n-k) )==true  ) )  
+ )
+{  
+   // hence the strings are scramble
+    return true; 
+     }
+
+}
+
+
+return  mp[key]=flag;    // after checking all the cases of screable strings possibl if falg not becomes true, then they might not be scrable strings.
+
+}
+
+
+int main()
+{
+
+mp.clear();
+
+cout<<"\n Checking the Scramble Strings:  swapping the chils of the non leaf nodes.";
+
+string a="great"  ;
+string b="rgeat";     
+
+
+//eg. of  Not scramble : string a="ABCDE"  string b="CAEBD";
+
+//checking basics condition :
+
+if(a.size()!=b.size()  || a.size()==0)  { cout<<"\nNot Scramble"; return 0;}
+
+bool chk= solve(a,b);
+
+if(chk)  cout<<"\n Yes Scramble String ";
+else cout<<"Not Scramble ";
+
+
+    return 0;
+}
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+/*
+
+COPIED CODE FROM GFG
+
+// dp 29 Boolean parenthesis true , need  to put the operator , so that final operation comes out to be true;
+
+#include <bits/stdc++.h>
+using namespace std;
+ 
+int dp[101][101][2];
+int parenthesis_count(string s,
+                      int i,
+                      int j,
+                      int isTrue)
+{
+    // Base Condition
+    if (i > j)
+        return false;
+    if (i == j) {
+        if (isTrue == 1)
+            return s[i] == 'T';
+        else
+            return s[i] == 'F';
+    }
+ 
+    if (dp[i][j][isTrue] != -1)
+        return dp[i][j][isTrue];
+    int ans = 0;
+    for (int k = i + 1
+         ; k <= j - 1; k = k + 2)
+    {
+        int leftF, leftT, rightT, rightF;
+        if(dp[i][k - 1][1] == -1)
+        {
+            leftT = parenthesis_count(s, i, k - 1, 1);
+        } // Count no. of T in left partition
+        else {
+            leftT = dp[i][k - 1][1];
+        }
+ 
+        if (dp[k + 1][j][1] == -1)
+        {
+            rightT = parenthesis_count(s, k + 1, j, 1);
+        } // Count no. of T in right partition
+        else
+        {
+            rightT = dp[k + 1][j][1];
+        }
+ 
+        if (dp[i][k - 1][0] == -1)
+        {
+            // Count no. of F in left partition
+            leftF = parenthesis_count(s, i, k - 1, 0);
+        }
+        else
+        {
+            leftF = dp[i][k - 1][0];
+        }
+ 
+        if (dp[k + 1][j][0] == -1)
+        {
+            // Count no. of F in right partition
+            rightF = parenthesis_count(s, k + 1, j, 0);
+        }
+        else
+        {
+            rightF = dp[k + 1][j][0];
+        }
+ 
+        if (s[k] == '&')
+        {
+            if (isTrue == 1)
+                ans += leftT * rightT;
+            else
+                ans += leftF * rightF + leftT * rightF
+                       + leftF * rightT;
+        }
+        else if (s[k] == '|')
+        {
+            if (isTrue == 1)
+                ans += leftT * rightT + leftT * rightF
+                       + leftF * rightT;
+            else
+                ans = ans + leftF * rightF;
+        }
+        else if (s[k] == '^')
+        {
+            if (isTrue == 1)
+                ans = ans + leftF * rightT + leftT * rightF;
+            else
+                ans = ans + leftT * rightT + leftF * rightF;
+        }
+        dp[i][j][isTrue] = ans;
+    }
+    return ans;
+}
+ 
+// Driver Code
+int main()
+{
+    string symbols = "TTFT";
+    string operators = "|&^";
+    string s;
+    int j = 0;
+ 
+    for (int i = 0; i < symbols.length(); i++)
+    {
+
+
+
+
+
+
+
+
+
+
+
+
+        s.push_back(symbols[i]);
+        if (j < operators.length())
+            s.push_back(operators[j++]);
+    }
+     
+    // We obtain the string  T|T&F^T
+    int n = s.length();
+     
+    // There are 4 ways
+    // ((T|T)&(F^T)), (T|(T&(F^T))), (((T|T)&F)^T) and
+    // (T|((T&F)^T))
+    memset(dp, -1, sizeof(dp));
+    cout << parenthesis_count(s, 0, n - 1, 1);
+    return 0;
+}
+
+*/
+
+
+
+
+
+/*
+
+unordered_map<string,int>mp;
+
+int solve(string s, int i, int j, bool var)
+{
+
+// base condition : 
+    if(i>j)  return true;   //************** all are check 
+
+    if(i==j) {  // if only 1 char is left, T  
+
+        if(var==true)   return s[i]=='T';     // it will return 1 if s[i] is T
+        else if(var==false)  return s[i]=='F';    //if var if false , ie call need to find the no of way to get false, then if s[i]='F' , hence it return cnt as 1;
+    }
+
+    //Otherwise we check in them map
+    string key= to_string(i);
+    key+=" ";
+    key+=to_string(j);
+    key+=" ";
+    key+=to_string(var);
+
+    // search in the map
+if(mp.find(key)!= mp.end())
+{
+return mp[key];
+}
+
+
+// otherwise calcultate the answer for the call of string from i to j
+
+int ans=0;
+
+for(int k=i+1;k<j;k=k+2)          // looping k to all the operators present ^,&,| 
+{ 
+
+ 
+    // can avoid these recursive calls also.
+  //  int lT;
+  // Can use these internal call to avoid the repeating solving of the sub trees.
+     
+ //    string t=to_string(i)+" "+to_string(k-1)+" "+to_string(true);
+ //    if(mp.find(t)!=mp.end())    lT=mp[t];
+ //    else
+  //   lT=solve(s,i,k-1,true);
+
+
+
+    int lT=solve(s,i,k-1,true);
+    int rT=solve(s,k+1,j,true);
+    int lF=solve(s,i,k-1,false);
+    int rF=solve(s,k+1,j,false);
+
+
+// Now we have different recursive calls  , no calculating results according to need
+
+    if(s[k]=='&')
+    {
+        if(var==true)         // ie we need to find the no of ways to be true
+        {
+            ans+= lT * rT;
+        }
+        else if(var==false)
+        {
+            ans+= (lT*rF)+ (lF*rT)+ (lF*rF);
+         }
+    }
+    
+    else if(s[k]=='|')
+    {
+         if(var==true)
+         {
+            ans+= (lT*rF) + (lF*rT)+ (lT*rT);
+         }
+         else 
+         {
+            ans+= (lF*rF);
+         }
+    }
+
+    else if(s[k]=='^')
+    {
+             if(var==true)
+             {
+                ans+= (lF * rT) + (lT*rF); 
+             }
+             else if(var==false)
+             {
+                ans+= (lT * rT )+ (lF * rF) ;
+             }
+
+
+    }
+
+
+
+
+
+
+}
+
+ return  mp[key]=ans;
+
+
+}
+
+
+
+
+int main()
+{
+  string s="T^F|F";            //  T|T&F^T o/p:4   ,  "T^F|F" o/p : 2  
+int n=s.size();
+  int ans=solve(s,0,n-1,1);    // passed 1 as we need to find the all ways to make this expression true;
+ cout<<"The expression is true by : "<<ans; 
+
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+//dp_28 : This is min no of pallindrome partitioning  
+// eg nitib    =    n  |  iti  | b   ans=2          , worst answer is partiton n-1 times so all individual char will be itself act as pallindrome.
+
+
+// for memoization : we are storing the data in the matrix 
+int t[1001][1001];
+
+
+bool ispallindrome(string x, int a, int b)
+{
+   // logic to check the pallindrome string , char from last are equal to char at front
+
+    for(int i=a,j=b ; i<j ; i++ , j--)
+    {
+        if(x[i]!=x[j])  return false;   //Not pallindrome
+    }
+return true;        // otherwise pallindrome
+}
+
+int solve(string x, int i, int j)
+{
+         //STEP 2 : base condition 
+     if(i>=j) return 0;            // i==j means single character , which itself is a pallindrome.
+     
+     if(ispallindrome(x,i,j)==true)  // if string is pallindrome, then 0 partition "abcba"
+     return 0;
+
+
+if(t[i][j]!=-1)
+{
+    return t[i][j];
+}
+
+
+
+//Now STEP 3 : Now run the k - loop for the possiblity of partition at var position. 
+int mini=INT_MAX;
+for(int k=i;k<j;k++)
+{
+
+// storing the resutls in the matrix :
+int left=0,right=0;
+
+
+
+if(t[i][k]!=-1)           //yes val present 
+  left=t[i][k];
+else 
+    {   left=solve(x,i,k);
+        t[i][k]=left;
+    }
+
+if(t[k+1][j]!=-1) 
+ right = t[k+1][j];
+else
+{  right=solve(x,k+1,j);
+  t[k+1][j]=right;
+}
+int temp_ans=1+left+right;               //updated optimised the rersive calls
+
+    //  int temp_ans= 1+ solve(x,i,k)+ solve(x,k+1,j);    // +1 for the current partition , and further will come from the recursive calls.
+
+      // find the min partition from all possible partitions : 
+      if(temp_ans < mini) mini=temp_ans;
+
+}
+
+     return mini ;                              
+}
+
+
+
+int main()
+{
+  memset(t,-1,sizeof(t));
+
+   string x="nitibrar";       // n  | iti  | b | rar     --> 3 partitions
+   int n=x.size();
+
+  //STEP 1 : finding the start and end  i, j index of the loop
+
+   int partition=solve(x,0,n-1);      // (i) start =0  , (j) end = n-1 
+   
+
+
+   cout<<"The min partition required to divded string into pallindromic substring = "<<partition;
+
+    return 0;
+}
+
+
+
+*/
+
+
+
+
+
+/*
+
+
+// dp 27 :   Matrix change multiplication :::::::
+
+// we are given the array , which signifies the dimensions of the matrix , no need to minimize the cost of overall multiplication .
+
+int MCM_cost(int [] , int    , int  );
+// forward declaration ::::::
+
+
+int  main()
+{
+
+int arr[]={40,20,30,10,30};
+int n=sizeof(arr)/sizeof(arr[0]);
+
+// eg    matrices are A= 40 X 20 , B= 20 X 30 , C= 30 X 10 , D= 10 X 30
+// here minimum cost will come  (A(BC))D = ie 26000 will be ans.
+// The cost if defined as 
+   //       A = 40 X 20  ,      B=20 X 30 
+     //cost :           40 * 20 * 30
+
+
+ //STEPS TO BE followed to solve MCM problem. 
+
+  // 1. search for the pos of i and j    , so that it wont go out of the range. ans make call to recursive function ,with range of i to j 
+  // 2. find base condition , where the recursion end .    find smallest valid input/ smallest invalid input. , here when only  1 ele let return 0 as its not valid dimension of any  Matrix
+  // 3. Now use k loops to break string at various pos
+              // find the index of loops of k   k=i , k<j so that call be made to solve(ar,i ,k )  & solve(ar, k+1 ,j)
+  //4. Now at each recursion call find the temp and , and then final answer.
+
+                        //STEP 1 : find range of i and j
+  int min_cost= MCM_cost(arr,1,n-1);
+
+  cout<<"\n The cost is : " <<min_cost; 
+
+    return 0;
+}
+
+
+// defination of function , which if forward declared.
+int MCM_cost(int arr[],  int i , int j)
+{
+    // if only single element left, then return 0 , not a valid dimension of the Matrix.
+    
+    if(i>=j) return 0;
+
+    int mini=INT_MAX;
+
+     // loops to run loop for k 
+
+     for(int k=i;k<j;k++)
+     {  
+        //recursive call to left and right part of index k  + cost to mutiply these to matrix (found cond by taking example)
+        int val=   MCM_cost(arr, i,k )  + MCM_cost(arr ,k+1,j ) +  (arr[i-1] * arr[k] * arr[j]);
+
+        if(val<mini)
+            mini=val;
+     } 
+
+return mini;
+
+}
+
+
+
+
+*/
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*
+
+// dp 26:     find the minimum no oif insertion to convert it into the pallindrome subsequence
+
+
+
+int t[1001][1001];
+
+
+int LCS(string x,string y,int  n,int m)
+{
+    // initailization : base condition 
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+    }
+
+    for(int i=1; i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+            if( (x[i-1] == y[j-1]) )
+            {
+                   // not same index , ensures that they will contribute in  two different repeating subsequences.
+                  t[i][j]=1+t[i-1][j-1];
+
+            }
+            else t[i][j]=  max(t[i][j-1] , t[i-1][j]);
+        }
+    }
+
+
+return t[n][m];
+}
+
+
+
+int main()
+{
+  // Need to find the minimum no oif insertion to convert it into the pallindrome subsequence
+
+ string x="aebcbda";           // either add the  e and d respectively to make pallindrome , or its same as removing /deleting the the two char :
+
+ string y=x;
+ reverse(y.begin(),y.end());
+int n=x.size(); int m=y.size();
+
+ int len_lcs=LCS(x,y,n,m);
+
+  // now we have the LCS length  : 
+
+
+//Hence upon observing , no of insertion = no of deltions = x.size() - size of pallindrome subseqquence
+int ans=n-len_lcs;
+cout<<"No of insertions are  : " << ans; 
+
+    return 0;
+}
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+//EASY ::::::::::::
+// dp 25 : Just check is string a is present in as subsequence in y
+
+int t[1001][1001];
+
+
+int LCS(string x,string y,int  n,int m)
+{
+    // initailization : base condition 
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+    }
+
+    for(int i=1; i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+            if( (x[i-1] == y[j-1]) )
+            {
+                   // not same index , ensures that they will contribute in  two different repeating subsequences.
+                  t[i][j]=1+t[i-1][j-1];
+
+            }
+            else t[i][j]=  max(t[i][j-1] , t[i-1][j]);
+        }
+    }
+
+
+return t[n][m];
+}
+
+
+int main()
+{
+
+string x="AXY";
+string y="ADXCPY";
+
+// best way is to find the len of LCS , if its equal to len of a itself then return true , else return false
+
+int n=x.size();
+int m=y.size();
+
+int len_LCS=LCS(x,y,n,m);
+
+if(len_LCS==x.size())
+    cout<<"\n Yes subsequence present";
+else cout<<"\n Not present. ";
+
+
+    return 0;
+}
+
+
+*/
+
+
+/*
+
+// dp 24 : ********************* 
+
+// Longest repeating supersequence  (subsequence which repeat itself.)
+
+int t[1001][1001];
+
+
+string ans="";
+
+void print_lcs(string x, string y, int n, int m)
+{
+ int i=n, j=m;
+ ans="";
+
+
+while(i>0 && j>0)
+{
+                    // *** IMP COND:  i!=j  ***************************
+ if(x[i-1]==y[j-1] && i!=j)   // if char equal then include it in lcs and move diagonally upwards.
+ {
+  ans+=x[i-1];
+
+  // move diagonally up from current index, 
+  //currently in matrix we are on  t[n+1][m+1] t[6][5]
+  // n=6, m=5
+
+i-- ;
+j-- ;
+
+ }
+else {
+    // move in direction of max val of upper box and the left box.
+if(t[i-1][j] > t[i][j-1]) i--;
+else j--;
+}
+
+}
+
+reverse(ans.begin(), ans.end());
+cout<<ans;
+
+}
+
+
+
+
+int LCS(string x,string y,int  n,int m)
+{
+    // initailization : base condition 
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+    }
+
+    for(int i=1; i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+            if( (i!=j)  && (x[i-1] == y[j-1]) )
+            {
+                   // not same index , ensures that they will contribute in  two different repeating subsequences.
+                  t[i][j]=1+t[i-1][j-1];
+
+            }
+            else t[i][j]=  max(t[i][j-1] , t[i-1][j]);
+        }
+    }
+
+
+return t[n][m];
+}
+
+
+
+
+int main()
+{
+
+    string x="ABDCEABD";           // ans : ABD  (clue : abd is repeated twice , ie LCS with two different index of each elements)
+
+    cout<<"Task is to find the longest repeating subsequence  : ";
+ 
+    // we just copy the string x and find the LCS from the both : 
+
+ // we just add 1 constraint  that the index of char chosen from 1 st string , should not be from same index of the other string 2nd :
+  //This ensures that LCS will only contains those which are twice and on different index.
+
+
+string y=x;
+int n=x.size(); 
+int m=n;
+int LCS_length=LCS(x,y,n,n);
+
+cout<<"\nThe lenght of the Longest repeating subsequence is : "<<LCS_length;    
+
+cout<<"\nPrinting the LCS matrix after this operation : \n";
+
+  for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            cout<<t[i][j]<<" ";
+        }
+    cout<<endl;
+    }
+
+cout<<"\n Print the Repeating subsequence : \n";
+print_lcs(x,y,n,m);
+
+    return 0;
+}
+
+
+*/
+
+
+
+
+
+
+
+
+/*
+// dp 23: printing the ScSS Shortest Common Super Sequence : using the matrix of LCS
+
+
+int t[1001][1001];
+
+void print_SCSS(string x,string  y, int n,int  m)
+{
+  // start with the last index and include the common ele of x and y , and shift diagonally upward 
+    //  if not equal then shift to large no of left box or upper box , and include the char of string before moving .
+
+
+int i=n; int j=m;
+
+string ans="";
+while(i>0 && j>0)
+{
+     // if the char of two string matches from the last.
+    if(x[i-1]==y[j-1])
+    {
+ans+=x[i-1];   i--; j--;
+    }
+
+    else
+    {
+         // search which box is greater val,and include char before moving to that box.
+          // left box    //upper box
+          if(t[i][j-1] > t[i-1][j])
+          {
+            // include the char of String y char of j aswemove to j-1     , as this super sequence so include them also.
+             ans+=y[j-1];
+             j--;
+
+          }
+          else
+          {
+            ans+=x[i-1]; 
+            i--;
+          }
+
+
+    }
+
+
+}
+
+while(i>0) {ans+=x[i-1]; i--;}
+while(j>0)  {ans+=y[j-1]; j--;}
+
+//revesing the Scss
+reverse(ans.begin(),ans.end());
+cout<<"ScSS   : "<<ans;
+}
+
+int LCS(string x , string y ,int n, int m)
+{
+    // initialization 
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+
+         if(i==0 || j==0 ) t[i][j]=0;
+        }
+    }
+
+// loops condition 
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+            
+            if(x[i-1] == y[j-1])
+                    t[i][j]= 1+t[i-1][j-1];
+                else
+                    t[i][j]=max(t[i-1][j], t[i][j-1] );
+        
+        }
+    }
+
+    return t[n][m];
+}
+
+int main()
+{
+ string x="acbcf";
+ string y="abcdaf";
+
+//LCS: abcf
+ //o/p :   acbcdaf
+
+int n=x.length();
+int m=y.size();
+
+int len_LCS=LCS(x,y,n,m);
+
+cout<<"\n the len of the LCS is  : "<<len_LCS ;
+cout<<endl;
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<m+1;j++)
+    {
+        cout<<" "<<t[i][j];
+    }
+    cout<<"\n";
+}
+
+
+cout<<"\n The shortest common supersequence is  : ";
+print_SCSS(x,y,n,m);
+
+
+
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+/*
+
+// dp : 22 
+
+//Now we need to find the minimum no of deletions , to covert string into Longest Pallindromic Substring.
+
+int t[1001][1001];
+
+int LCS(string x,string y, int n,int m)
+{
+      // intitalization 
+      for(int i=0;i<n+1;i++)
+      {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+}
+
+// loops to fill the choice diagram
+
+for(int i=1;i<n+1;i++)
+      {
+        for(int j=1;j<m+1;j++)
+        {
+      
+        if(x[i-1]==y[j-1]) t[i][j]= 1+ t[i-1][j-1];
+        else
+            t[i][j]= max( t[i-1][j]  , t[i][j-1] );  
+        }
+      }
+
+
+return t[n][m];
+}
+
+
+int main()
+{
+   
+   string x="agbcba";
+
+   // basically we need to make the Longest pallindromic substring. (abcba)
+  
+  // ie no of deletions = x.size() - length of LPS
+
+cout<<"\nFirst finding the Longest Pallindromic substring length  : ";
+
+int n=x.size();
+string y=x;
+reverse(y.begin(),y.end());
+
+int len_LPS=LCS(x,y,n,n);
+
+// since no of deletion and lenght of LPS is inversely related,  hence maximize the pallindrome len , minimize the deletion.
+int ans=n-len_LPS;
+cout<<"\nNo of deletions needed  : " <<ans;
+
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+/*
+
+// dp 21 : 
+int t[1001][1001];
+
+// printing the LPS is same code as 
+
+void print_lcs(string x, string y, int n, int m)
+{
+ int i=n, j=m;
+string ans="";
+
+
+while(i>0 && j>0)
+{
+
+ if(x[i-1]==y[j-1])   // if char equal then include it in lcs and move diagonally upwards.
+ {
+  ans+=x[i-1];
+
+  // move diagonally up from current index, 
+  //currently in matrix we are on  t[n+1][m+1] t[6][5]
+  // n=6, m=5
+
+i-- ;
+j-- ;
+
+ }
+else {
+    // move in direction of max val of upper box and the left box.
+if(t[i-1][j] > t[i][j-1]) i--;
+else j--;
+}
+
+}
+
+reverse(ans.begin(), ans.end());
+cout<<ans;
+
+}
+
+
+int LCS(string x,string y, int n,int m)
+{
+      // intitalization 
+      for(int i=0;i<n+1;i++)
+      {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+      }
+
+// loops to fill the choice diagram
+
+for(int i=1;i<n+1;i++)
+      {
+        for(int j=1;j<m+1;j++)
+        {
+      
+        if(x[i-1]==y[j-1]) t[i][j]= 1+ t[i-1][j-1];
+        else
+            t[i][j]= max( t[i-1][j]  , t[i][j-1] );  
+        }
+      }
+
+
+return t[n][m];
+}
+
+
+// 
+int main()
+{
+
+    cout<<"\nHere we need to find the Longest Pallindromic substring ";
+    string x="agbcba";
+
+// ans  LPS   : abcba     {others are bcb , aba  , abba etc }
+
+    int n=x.size();
+
+    //Matching with requirement we are given a string, and need to reurn len of LPS , similar Ques to LCS
+//Trick is apply LCS and reverse  of LCS to get the LPS 
+string y= x;
+reverse( y.begin(), y.end() );
+
+int len_lps= LCS(x,y,n,n ) ;
+
+cout<<"The len of Longest Pallindromic Substring is : "<<len_lps;
+ 
+cout<<"\n The LPS is  ";
+print_lcs(x,y,n,n);
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+/*
+
+// dp 20 : 
+
+//How to identify the Dp : 
+//Whenever they ask for the Optimal solution (  Maximum or minimum ) :
+// search for (input, Question ,output )
+int t[1001][1001];
+
+int LCS(string x,string y, int n,int m)
+{
+      // intitalization 
+      for(int i=0;i<n+1;i++)
+      {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+      }
+
+// loops to fill the choice diagram
+
+for(int i=1;i<n+1;i++)
+      {
+        for(int j=1;j<m+1;j++)
+        {
+      
+        if(x[i-1]==y[j-1]) t[i][j]= 1+ t[i-1][j-1];
+        else
+            t[i][j]= max( t[i-1][j]  , t[i][j-1] );  
+        }
+      }
+
+
+return t[n][m];
+}
+
+
+
+int main()
+{
+string x="heap";
+string y="pea";
+
+// basically we need to convert the x string to y string .
+//
+int n=x.size(); int m=y.size();
+
+cout<<"Find the no of deletions and insertion  to covert string x to y ";
+// find the lcs of x and y  "ea"
+cout<<"  heap   --> ea    --> p  ";
+
+int lcs_length=LCS(x,y,n,m);
+cout<<"\nThe LCS lenght is "<<lcs_length;
+cout<<"\n No of Deletion from x string to LCS  : " << n-lcs_length ;
+cout<<"\n No of insertion to convert LCS to string y "<< m-lcs_length ;
+
+
+    return 0;
+}
+
+
+*/
+
+
+
+
+
+
+
+/*
+
+//dp 19 (b) : extra part to print the SCSS , using its own matrix set, where 1 + min( recursive calls)
+int t[1001][1001];
+int solve(string x,string y, int n,int m)
+{
+ // Refer GFG if not able to solve it properly.
+
+    //initialization part:
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0)  t[i][j]=j ;     // when the x string is empty , then s_super_seq len will be j itself
+              if(j==0) t[i][j]=i;
+        }
+    }
+    
+    // choice diagram is converted to the loops
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+           if(x[i-1]==y[j-1]) 
+           t[i][j]=1+t[i-1][j-1];      // if char is common include it by +1 as len and search recursively now.
+           
+           else 
+            t[i][j]= 1+ min( t[i-1][j] , t[i][j-1]);
+        
+        }
+    }
+
+
+}
+
+void print_shortest_super_sequence(string x, string y, int n ,int m )
+{
+
+ // 
+  int i=n; int j=m;
+  
+  string final_ans="";
+
+  // the char at string will be at [i-1]  , as size of str is n itself so last char at str[n-1]
+ // compare the char of two string : if equal , include it in final_ans and move i-- and j--
+
+while(i>0 && j>0){
+
+ if(x[i-1]==y[j-1])
+ {
+    final_ans+=x[i-1];
+i--; j--;
+}
+
+// if char are different , then move to matrix side box which has lower value, and include the char of String before that.
+// eg moving to left box , ie include the char of Y string in final_ans before that.
+ else
+ {                //left box
+          if(t[i][j-1]     <  t[i-1][j]   )
+          {
+            // include the char of other and move to left box.
+            final_ans+=y[j-1];
+            j--;
+          }    
+          else
+          {
+            final_ans+=x[i-1];
+            i--;
+          }
+
+ }
+
+}
+
+while(i>0){ final_ans+=x[i-1]; i--;}
+while(j>0) {final_ans+=y[j-1]; j--;}
+
+
+reverse(final_ans.begin(), final_ans.end());
+
+cout<<final_ans<<endl;
+
+}
+
+
+int main()
+{
+    
+ string x="AGGTAB";
+ string y="GXTXAYB";
+
+ int n=x.size();
+ int m=y.size();
+
+ int lenght_scsuper= solve(x,y,n,m);
+ cout<<"The lenght of the shortest common super sequence "<<lenght_scsuper;
+
+cout<<endl;
+cout<<"\n Finally printing the status of the matrix after the ";
+cout<<endl;
+
+print_shortest_super_sequence(x,y,n,m);
+
+cout<<endl;
+
+
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            cout<<" "<<t[i][j];
+        }
+        cout<<endl;
+    }
+
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+/*
+// dp 19  :   finding the lenght of shortest common super sequence ( ie final ans should contain both the strings with minimum lenght possible.)
+int t[1001][1001];
+string ans="";
+
+void print_lcs(string x, string y, int n, int m)
+{
+ int i=n, j=m;
+ ans="";
+
+
+while(i>0 && j>0)
+{
+
+ if(x[i-1]==y[j-1])   // if char equal then include it in lcs and move diagonally upwards.
+ {
+  ans+=x[i-1];
+
+  // move diagonally up from current index, 
+  //currently in matrix we are on  t[n+1][m+1] t[6][5]
+  // n=6, m=5
+
+i-- ;
+j-- ;
+
+ }
+else {
+    // move in direction of max val of upper box and the left box.
+if(t[i-1][j] > t[i][j-1]) i--;
+else j--;
+}
+
+}
+
+reverse(ans.begin(), ans.end());
+cout<<ans;
+
+}
+
+
+
+int LCS(string x, string y, int n,int m)
+{
+    // initialization 
+    for(int i=0;i<n+1;i++)
+    {
+        for(int  j=0; j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+    }
+
+    // choice diagram is converted to the loops
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+            if(x[i-1]==y[j-1])  t[i][j]= 1+t[i-1][j-1];
+           else t[i][j]= max( t[i-1][j] , t[i][j-1] );
+
+        }
+    }
+  
+return t[n][m];
+}
+
+
+
+int main()
+{
+
+   string x="AGGTAB";
+   string y="GXTXAYB";
+
+   int n=x.size();
+   int m=y.size();
+
+int len_LCS=LCS(x,y,n,m);
+
+cout<<"\n The LCS lenght  "<< len_LCS <<endl;
+cout<<"The LCS is : ";
+print_lcs(x,y,n,m);
+
+cout<<"\nThe lenght of smallest  super sequence is  : "<< n+m-len_LCS; 
+
+  // ie remove the common LCS part with is present twice in the final string.
+ // print_SSS(x,y,n,m);
+
+
+ //    return 0;
+}
+
+
+*/
+
+
+
+
+
+
+
+/*
+//dp 18 : printing the Longest Common Subsequence (LCS)
+
+int t[1001][1001];
+
+int LCS(string x,string y, int n ,int m)
+{
+   // base initialization
+
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            if(i==0 || j==0 ) t[i][j]=0;
+        }
+    }
+    
+// choice diagram is converted to the loops
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<m+1;j++)
+        {
+             if(x[i-1]==y[j-1])  t[i][j]=1+ t[i-1][j-1];
+             
+             else t[i][j]=   max( t[i-1][j] , t[i][j-1] );
+
+        }
+    }
+ 
+return   t[n][m];
+
+}
+
+void print_lcs(string x, string y, int n, int m)
+{
+ int i=n, j=m;
+string ans="";
+
+
+while(i>0 && j>0)
+{
+
+ if(x[i-1]==y[j-1])   // if char equal then include it in lcs and move diagonally upwards.
+ {
+  ans+=x[i-1];
+
+  // move diagonally up from current index, 
+  //currently in matrix we are on  t[n+1][m+1] t[6][5]
+  // n=6, m=5
+
+i-- ;
+j-- ;
+
+ }
+else {
+    // move in direction of max val of upper box and the left box.
+if(t[i-1][j] > t[i][j-1]) i--;
+else j--;
+}
+
+}
+
+reverse(ans.begin(), ans.end());
+cout<<ans;
+
+}
+
+
+int main()
+{  
+
+    string x="aabdef";
+    string y="aadef";
+
+    int n=x.size();
+    int m=y.size();
+
+    int lcs_lenght= LCS(x,y,n,m);
+
+    cout<<"the lenght of the lcs is  : "<<lcs_lenght;
+
+cout<<endl;
+
+
+cout<<"The printed LCS is ";
+print_lcs(x,y,n,m);
+    
+    // printing the matrix after the operation of the findling len of lcs
+cout<<endl;
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0; j<m+1;j++)
+        {
+            cout<<" "<<t[i][j];
+        }
+        cout<<endl;
+    }
+
+
+    return 0;
+}
+
+
+*/
+
+
+
+
+
+
+
+/*
+
+//dp 17 : longest common substring  ::
+
+
+ int t[1001][1001];
+int index=0;
+int maxi_len=0;
+
+
+int LCSS(string x, string y , int n ,int m)
+{
+  // initialization
+       for(int i=0;i<n+1;i++)
+       {
+        for(int j=0;j<m+1; j++)
+         {
+            if(i==0 || j==0 )  t[i][j]=0;
+          }
+       }
+
+// conditions for the loops : 
+
+       for(int i=1;i<n+1;i++)
+       {
+        for(int j=1;j<m+1;j++)
+        {
+            if(x[i-1]==y[j-1])  
+                {
+                    t[i][j]= 1+ t[i-1][j-1];
+
+                if(t[i][j]>= maxi_len) {  maxi_len=t[i][j];   index=i; }     // to keep track of end index of Longest common substring so that we can print it , as we already know its length.
+                }
+               else
+               {
+                t[i][j]=0;             //no substring  at this index.
+               } 
+
+
+        }
+       }
+
+return maxi_len;       // it stores the maximum lengthe of the substring.
+
+}
+
+int main()
+{
+
+   string x="abr";
+   string y="rabm";
+
+   int n=x.size();
+   int m=y.size(); 
+
+int ans=LCSS(x,y,n,m);
+
+   cout<<"The length of the longest common substring is : "<<ans;
+
+// to print the LCSS , we know the len of it and the ending index .
+string temp="";
+   while(maxi_len--)
+   {
+        index--;
+        temp+=x[index];
+   }
+
+reverse(temp.begin(),temp.end());
+cout<<endl;
+cout<<"The substring is  : "<<temp<<endl;
+
+// printing the full matrix 
+     for(int i=0;i<n+1;i++)
+     {
+        for(int j=0;j<m+1;j++)
+        {
+            cout<<" "<<t[i][j];
+        }
+        cout<<endl;
+     }
+
+
+
+    return 0;
+}
+
+*/
+
+
+/*
+
+// dp 16  Tabulataion is basically omitting the recursive call and completely storing the data in table format to answer major problems from the previous solved problems. 
+// We need tablulation dp , so that the stack overflowe problem will not occur during the recursive calls of the version. 
+
+int t[1001][1001];
+
+int LCS(string x, string y, int n,int m)
+{
+
+// base condtion is changed to the initialization ::::::::::::::
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<m+1;j++)
+        {
+            if( i==0 || j==0 ) { t[i][j]=0; }    // as any of string has len =0 , then lcs will be 0
+        }
+    }
+
+  // Now using loop to fill the rest of the matrix and to omit the recursive calls.  
+ 
+ for(int i=1;i<n+1;i++)
+ {
+    for(int j=1;j<m+1;j++)
+    {
+
+     // just change the recursive code to the tablulation dp.
+         
+     if( x[i-1] == y[j-1] ) 
+     t[i][j]= 1 + t[i-1][j-1] ;
+
+     else t[i][j]= max( t[i-1][j] , t[i][j-1]  ) ;   // in recursive call it simply menas , just done with last one , no check the remaining . But in tabulation , we fill the samller sub problems first , then move to larger problem. (bottom up approch )
+
+    }
+ }
+// Hence the final lcs lenght is  :
+return t[n][m];    
+}
+
+
+
+int main()
+{
+
+    string x="abgcdf";
+    string y="rsacbecf";
+
+    int n=x.size();
+    int m=y.size();
+
+    int lcs_length=LCS(x,y,n,m);
+     
+     cout<<"The lenght of the LCS is  : "<<lcs_length;
+
+
+// printing the full matrix 
+     
+     for(int i=0;i<n+1;i++)
+     {
+        for(int j=0;j<m+1;j++)
+        {
+            cout<<" "<<t[i][j];
+        }
+        cout<<endl;
+     }
+
+
+    return 0;
+}
+
+
+
+*/
+
+
+  
+/*
+// dp 15 :   memoization of LCS : is just storing the evaluation of the results , so that we can use the result when call to subfunction is made again.
+
+int t[1001][1001]; 
+
+int LCS(string x, string y ,int n ,int  m)
+{
+
+   // base condition 
+    if(n==0 || m==0 ) return  0;
+
+    // adding 1 more cond in the memozation approch :
+    if(t[n][m]!=-1)  return t[n][m];
+
+   
+   // choice diagram 
+   if(x[n-1]==y[m-1]) 
+    return   t[n][m]=  1+  LCS(x,y,n-1,m-1);
+
+   else return t[n][m] =  max( LCS(x,y,n-1,m) , LCS(x,y,n,m-1) );   
+
+}
+
+
+
+int main()
+{
+    
+       string x="abcdef" ;
+    string y="rsbaegf";
+
+      //ans will be LCS is bef 
+     int n=x.size();  int m=y.size();
+
+// setting the values in matrix to -1;
+
+memset(t, -1 ,sizeof(t));
+
+      int lcs_length=LCS(x,y,n,m) ; 
+
+
+
+
+cout<<"The length of LCS is  : "<<lcs_length;
+cout<<endl;  
+
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<m+1;j++)
+     {
+        cout<<" "<<t[i][j];
+     }
+     cout<<endl;
+}
+
+  return 0;
+
+}
+
+
+*/
+
+
+
+
+
+
+
+
+/*
+//dp 14  ::  longest common subsequence  (not continous selection )
+
+//           RECURSION CODE  : 
+
+int LCS(string x, string y, int n, int m)
+{
+    //base conditioon
+   if(n==0 || m==0 ) return 0;        // if any string empty then lcs size=0;
+
+   // choice diagram + smaller recursive calls 
+   if(x[n-1]==y[m-1])
+    return 1+LCS(x,y,n-1,m-1);
+   else    
+    return max( LCS(x,y,n,m-1) , LCS(x,y,n-1,m));
+
+}
+
+
+
+int main()
+{
+    string x="abcdef" ;
+    string y="rsbaegf";
+
+  //ans will be LCS is bef 
+     int n=x.size();  int m=y.size();
+
+   int len= LCS(x,y,n,m);
+cout<<"LCS length is : "<<len;
+
+    return 0;
+}
+
+
+*/
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+/*
+
+// dp 13:
+
+//Find the minimum no of coins to get the required sum.
+int t[1001][1001];
+
+int main()
+{  int n=3;
+   int coins[n]={25, 10, 5};
+     int sum=30;
+// op : ans =2 ; (2+3)
+
+//Here they have asked to find the no of coins for each sum.
+int C=sum;
+     // initialization 
+
+     for(int i=0;i<n+1;i++)
+     {
+        for(int j=1;j<C+1;j++ )   // as the t[0][0] is infinity coins needed.
+         {
+            if(i==0 )    // no coins in array , so to get sum=x , we hypothtically needed INT_MAX no of coins , this is differenct from normal kanpsack which ask the no of ways possible so in that case it will be  its will be 0
+            {
+              t[i][j]=INT_MAX-1;       //safety to store 
+            }
+            if(j==0)
+            {             // ie we need 0 sum , so how many coins we need  0        , no matter how many coins are availeable in tha coins array.
+                t[i][j]= 0; 
+            }
+
+        }
+     }
+//Initialization of the 2 row  : This is the UNIQUE question in which  we have to initialize the 2 row.
+//Take eg of coins [] ={3,4,5} sum=5 , to understand this.
+//************************************************************************
+
+for(int j=1;j<C+1;j++)
+{
+    if(  j  % coins[0]==0) 
+    t[1][j]= j /coins[0];
+
+   else {
+    t[1][j]=INT_MAX-1;         // we have stored INT_MAX-1 , so that it not goes out of range when added+1 in operation to include the element.
+     }
+}
+
+
+// now normal loops : filling from the 3 row :
+// we need to find the minimum no of ways 
+
+for(int i=2;i<n+1;i++)
+{
+    for(int j=1;j<C+1;j++)
+    {
+        if(coins[i-1]<= j)
+        {             // include                  //exlude
+            t[i][j]= min  (   1+ t[i][j- coins[i-1] ] , t[i-1][j] ) ;
+        }
+        else      // no other option , just exclude it.
+            { t[i][j]= t[i-1][j]  ; }
+    }
+}
+
+
+
+
+
+cout<<"Finally the minimum no of coins to get the desired sum : "<<t[n][C];
+
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+/*
+
+// dp 12
+//Coins change I : to find maximum no of ways to get the desired sum out of the coins given.
+
+
+
+
+int t[1001][1001];
+int main()
+{
+
+int n=3;
+int coins[n]={1,2,3};
+int sum=5;
+
+// find the ways to get sum 5
+//ways :  { 1+1+1+1+1 , 1+1+1+2, 1+1+3 , 1+2+2 , 2+3 }
+
+// here we can repeat the coins , so its unbound knapsack example .
+
+int C=sum;
+// initialization 
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<C+1;j++)
+if(i==0 || j==0 ) 
+{
+                        //i==0 no coins avaible in array , so ways to divide sum into coins , ways =0 ,
+                        // if j==0 its sum given is 0 , how to obtain the 0 by taking the  empty set , no matter how many coins are available in array.
+
+if(i==0)  t[i][j]=0;
+if(j==0)   t[i][j]=1;              // empty set available   , but compareing to the knapsack , where if capacity =0 , then profit =0 , as no matter how many elements are present but as capacity is zero.
+
+
+}
+
+}
+
+
+// condition of the loops 
+for(int i=1;i<n+1;i++)
+{
+    for(int j=1;j<C+1;j++)                  // C  is the sum possible
+    {
+        if(coins[i-1]<= j )
+            {   // included, but can be considered again    //excluded
+                t[i][j]=   t[i][j-coins[i-1]] + t[i-1][j];
+            }
+            else t[i][j]=t[i-1][j];         //excluded.
+    }
+}
+
+
+cout<<"Total no of ways to get sum : "<<t[n][C];
+
+
+    return 0;
+}
+
+
+
+*/
+
+
+
+
+
+
+/*
+
+// dp 11 :  Rod cutting problem same code as the unbound kapsack problem.
+int t[1001][1001];
+
+int main()
+{
+int n=8;
+int price[n]={1,5,8,9,10,17,17,20};
+
+// first of all making the length array.
+
+int length[n];
+for(int i=0;i<n;i++)
+{
+    length[i]=i+1;          // filling all the lenght that can be cut from 1 unit lenght the n lenght as it is 
+}
+
+
+
+// Now apply the unbound knapsack condition
+int L=n;         // just like the C capacity of knapsack
+
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<L+1;j++)
+    {
+        if(i==0 || j==0)
+            {
+                t[i][j]=0;  // i==0 means no elements in the array.  so no profit  // j==0 : no cuts, or rod not even considered, then also profit =0 
+            }
+    }
+}
+
+///////////////////////////////////
+// condition of the loops
+
+ for(int i=1;i<n+1;i++)
+ {
+    for(int j=1;j<L+1;j++)
+    {                              // just a small change when item included , it can be chosen again , t[i]  , not t[i-1]
+      if(length[i-1]<= j)
+      {                            // included                //excluded                  
+        t[i][j]= max( price[i-1] + t[i][j - length[i-1]] , t[i-1][j] );
+      }
+      else 
+        {t[i][j]=t[i-1][j] ;}
+    }
+  }
+
+cout<<"The final profit is : "<<t[n][L];
+
+}
+
+
+
+
+
+// video 13 : Unbound Knapsack (Here one item can be choosed more than 1 times.)
+
+/*
+
+ W = 8
+       val[] = {10, 40, 50, 70}
+       wt[]  = {1, 3, 4, 5}     
+
+*/
+
+//when we process a item and reject it , then it is not checked again.
+//but when we include a item, again we have a choice to include it again.
+
+/*
+//  dp_10
+
+int t[1001][1001];
+
+int main()
+{
+
+    //  find the max profit when unbound knapsack considered 
+   int n=4;
+   int wt[n]={1,3,4,5};
+   int val[n]={10, 40, 50, 70};
+   int C=8;
+   //ans will be 110
+
+
+
+// initialization will be same as  knapsack 
+
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<C+1;j++)
+    {
+        if(i==0 || j==0 )
+       {
+        t[i][j]=0;
+       }
+    }
+}
+
+// now we are following cond of multiple instance 
+
+for(int i=1;i<n+1;i++)
+{
+    for(int j=1;j<C+1;j++)
+    {
+         // include or exclude
+        if(wt[i-1]<= j)
+        {                  //include               //exclude
+            t[i][j]= max( val[i-1] + t[i][j-wt[i-1]]   , t[i-1][j] );
+        }
+        else //no choice other than to exlude 
+            t[i][j]= t[i-1][j];
+
+
+
+    }
+}
+
+
+cout<<"The final profit from unbounded kanpsack is  : "<< t[n][C];
+
+/*
+
+cout<<"\nFinal arrangement is : \n";
+for(int i=0;i<n+1;i++)
+{
+for(int j=0;j<C+1;j++)
+{  cout<<" "<<t[i][j];
+}
+    cout<<endl;
+}
+
+
+
+    return 0;
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////
+////////////////////////////////v////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+//______________________________________________________________________________________
+
+// dp_9 achive target sum by adding + and - sign in the elemnts  
+
+/*  This is the same problem   as count of subset with given difference (here sum).
+
+Because we are going to group the + sign elm int 1 subsets ans -ve sign ele in another subsets 
+
+Refer dp 8
+
+ */
+
+
+//______________________________________________________________________________________
+
+// dp_8 count no of subsets with given difference
+
+/*
+
+int t[1001][1001];
+
+int find_subset_sum_possible(int arr[],int C, int n)
+{
+  //base condition is chaged into the initialzation condition.
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0; j<C+1;j++)
+        {
+            if(i==0)  t[i][j]=0;
+            if(j==0)   t[i][j]=1;
+        } 
+    }
+
+    //choice diagram is converted to the loops 
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<C+1;j++)
+        {
+            if( arr[i-1] <= j)
+            {
+                t[i][j]= t[i-1][j-arr[i-1]] + t[i-1][j];
+
+            }
+            else
+                t[i][j]=t[i-1][j];
+        }
+    }
+
+cout<<endl;
+ for(int i=0;i<n+1;i++)
+    {
+        for(int j=0; j<C+1;j++)
+        {
+            cout<<" "<<t[i][j];
+           } 
+            cout<<endl;
+    }
+cout<<endl;
+
+return t[n][C];                 //this will have the total count of all the variables.
+}
+
+
+int main()
+{
+   int n=4;
+   int arr[n]={1,1,2,3};
+   int diff=1;
+
+   //here s1-s2 = 1 ;  ans we know sum of two subsets is equal to range of it.
+     //   s1+s2=sum;
+
+   //hence elemination makes it  as s1=(sum+diff)/2;
+
+   //hence overall we need to find a subset with given sum value  is possible or not.
+   
+   int range=0;
+   for( int i=0;i<n;i++) range+=arr[i];
+
+   int s1_sum= (range+diff)/2;
+     
+    int ans=find_subset_sum_possible(arr,s1_sum,n);
+
+cout<<"The given count of subset with given difference is  :  "<<ans;
+
+    return 0;
+}
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*    
+
+//______________________________________________________________________________________
+
+
+//dp_7 MINIMIZE THE  subset sum difference          .........
+
+
+cout<<"Hi NICE Question";
+  //Task is to minimise the difference between sums of any two subsets .
+  //  eg    {1,6,5} - {11} = 1 best answer 
+
+  // range = sum of elements
+  // let s1 is smaller in sum , s2 = range-s1 ; 
+  //we need to minimize :    s2-s1 = mini       , or put s2 value 
+  //                          (range-s1) -s1 =mini
+  //                          range -2(s1) = mini 
+  // now we are left with putting the values of s1 , and minimizing expression . 
+  //IMP NOTES , larger the value of s1 , expressioin will be much minimized. 
+
+  // The s1 can have the sum  max of range/2 and min 0f 0 , but not all possible sum between them ,
+     // hence we need to go through the subset sum matrix last row with all ele , loop form range/2 to 0  and need to check whether sums (range/2 ,. . . , 0 )  are T or not.
+
+ //we will break the loop at first true(T) found: as we move from range/2 to 0 , so maxumum the valid sum, minimum the value of the whole expression.
+
+
+//VERY IMPORTANT AND LITTLE TRICKY QUESTION : need to find the range , and eliminate possibilities.
+
+
+
+
+
+bool t[1001][1001];
+
+int find_min_subsetsum_difference(int arr[], int C, int n)
+{
+   //base condition is changed to initailization condition.
+
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<C+1;j++)
+        {
+            if(i==0) t[i][j]=false;
+            if(j==0) t[i][j]=true;
+
+        }
+    }
+
+   //  choice diagram is changed to the for loops
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<C+1;j++)
+        {
+
+            if(arr[i-1] <= j)
+            {             //included              //excluded 
+                t[i][j]= t[i-1][j-arr[i-1]] or t[i-1][j];
+            }
+            else 
+                t[i][j]=t[i-1][j];
+
+        }
+    }
+
+
+
+// we need to minimize the range-2S1 , so search for s1 as maximum possible.
+
+int k=0;
+  for( k=C/2;k>=0;k--)
+  {
+    if(t[n][k]==1) break;        //this is max val of subset s1.
+  }
+
+
+
+
+
+//printing the matrix formed out of the followig operation.
+     for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<C+1;j++)
+        {
+     cout<<" "<<t[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+   
+
+ cout<<endl<<"The sum s1 is found to be "<<k<<endl;
+ cout<<endl<<"The sum s2 is found to be "<<C-k<<endl;
+ 
+  int ans=0;
+  return  ans= C - 2 * k;
+
+}
+
+
+int main()
+{
+
+    int n= 4;
+    int arr[n]={1,6,11,5};      
+
+
+  int sum=0; 
+  for(int i=0;i<n;i++) sum+=arr[i];
+
+   int ans=find_min_subsetsum_difference(arr,sum,n );
+
+    cout<<"\n The minimum subset sum differenece is :"<<ans;    
+
+    return 0;
+
+}
+
+*/
+
+
+
+
+
+
+/*
+//______________________________________________________________________________________
+
+//dp_6 count of subset sum : How many subset gives the given sum.
+
+int t[1001][1001];
+
+int find_countof_subsets(int arr[], int sum,int n)
+{   
+    int C=sum;     
+    //base cond of initialization : 
+
+    for( int i=0;i<n+1;i++ )
+    {
+        for(int j=0;j<C+1;j++)
+            {  
+                if(i==0 )  t[i][j]=0;         //if i==0, no ele in array , then sum is not possible hence cnt=0;
+                if(j==0 )   t[i][j]=1;    // if j==0 sum required is 0 , no matter how many ele in array , yes possible to take {}  , hence cnt=1 empty set
+            }
+    }
+
+    //choice diagram is changed to loops
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<C+1;j++)
+        {
+            //include or exlude
+            if(arr[i-1] <= j)
+            {
+                t[i][j]= t[i-1][ j - arr[i-1]] + t[i-1][j] ;                  // or is changed to + 
+            }
+            else  //no choice , other than to exlude it.
+                t[i][j]=t[i-1][j];
+
+        }
+    }
+   
+cout<<endl;
+
+//printing the matrix
+
+  for( int i=0;i<n+1;i++ )
+    {
+        for(int j=0;j<C+1;j++)
+            {  
+              cout<<t[i][j]<<" ";
+            }
+cout<<endl;
+        }
+
+
+
+cout<<endl;
+
+return t[n][C];
+}
+
+
+int main()
+{
+
+  int n=6;
+  int arr[n]={2,3,5,6,8,10};
+  int sum=10;
+
+  int count=find_countof_subsets(arr,sum,n);
+  cout<<"\n  The given count of subsets sum possible are : "<<count;
+
+    return 0;
+}
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//______________________________________________________________________________________
+/*
+//dp_5  Equal sum partition :
+
+bool t[1001][1001];
+
+bool checksubsetsum(int arr[],int C,int n)
+{
+   // base condtion --> initialization loops 
+    for(int i=0;i<n+1;i++)
+    {
+        for(int j=0;j<C+1;j++)
+        {
+           if(i==0) t[i][j]=false;
+           if(j==0)  t[i][j]=true;
+
+        }
+    }
+    //choice diagram converted to loops
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<C+1;j++)
+        {
+            if(arr[i-1] <= j)
+            {
+                t[i][j]= ( t[i-1][j - arr[i-1]] or t[i-1][j] ) ;
+            }
+            else
+            {
+                t[i][j]=t[i-1][j];    
+            }
+
+
+        }
+    }
+
+
+return t[n][C];
+}
+
+
+bool check_equal_sum_partition(int arr[],int sum, int n)
+{
+  if(sum % 2 != 0) return false;         //odd sum cant be divided equally 
+
+// else other check is we will find if sum/2 can be found in anysubset, then other subset will be automatically sum/2 ie equally divided.
+
+  return checksubsetsum(arr,sum/2,n);
+}
+
+
+
+int main()
+{
+   
+    memset(t,0,sizeof(t));
+
+   int n=4;
+   int arr[n]={1,5,11,5};
+   // o/p   : t   {1,5,5} & {11}
+
+   //basic login , if sum is even then can be equally divided.
+
+   int sum=0;
+   for(int i=0;i<n;i++)
+    {sum+=arr[i];}
+
+   //1 check if odd sum the return Not possibe equal partition 
+    
+    bool possible= check_equal_sum_partition(arr,sum,n);
+
+cout<<"WHETHER EQUAL SUBSET SUM CAN BE DIVIDED : "<<possible;
+
+
+    return 0;
+}
+
+
+*/
+
+
+/*
+
+//______________________________________________________________________________________
+
+//dp_4 subset sum possible or not. 
+
+bool t[1001][1001];
+
+
+bool chech_subset_sum(int arr[],int C, int n)
+{
+   
+  //base cond of initalization the 1 row and 1 col
+for(int i=0;i<n+1;i++)
+    {for(int j=0;j<C+1;j++)
+        {
+            if(i==0) t[i][j]=  false;                    //no element in [] , so sum (...) possible : false
+            if(j==0)  t[i][j]= true;                         // any no of  ele [] , sum =0 is poosible yes  {empty subset} 
+        }
+    }
+
+
+//choice diagram is convetted to loops 
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<C+1;j++)
+        {
+            //include/exculde
+            if(arr[i-1] <= j)
+            { t[i][j]=(t[i-1][j-arr[i-1]] or t[i-1][j]); }
+            //exclude
+            else
+              {  t[i][j]=t[i-1][j];  }
+
+        }
+    }
+
+
+
+cout<<endl;
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<C+1;j++)
+    {
+        cout<<t[i][j]<<" ";
+    }
+    cout<<endl;
+}
+cout<<endl;
+
+return t[n][C];
+
+}
+
+
+
+int main()
+{
+     int n=5;
+    int arr[n]={2,3,7,8,10};
+     int sum=11;
+
+    //Just a modification of knapsack dp : relate  wt[] <--> arr[]  and sum <--> Capacity(C) , max  is changed to || ,  val[] is removed , 
+
+     bool possible= chech_subset_sum(arr,sum,n);
+
+     cout<<"Whether subset sum is possible : "<<possible;
+
+
+
+
+    return 0;
+}
+
+*/
+
+
+/*
+
+//______________________________________________________________________________________
+
+//dp3_tabulation_dp  knapsack 
+
+int static t[1001][1001];
+
+
+int main()
+{
+
+//  find the max profit 
+   int n=4;
+   int wt[n]={1,3,4,5};
+   int val[n]={1,4,5,7};
+   int C=7;
+
+
+ //Ans : Net Profit is  : 9
+
+//memset(t,-1,sizeof(t));
+
+
+// base condition is turn into the initialization condition.
+
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0; j<C+1;j++)
+    {
+        if(i==0 or j==0) t[i][j]=0;
+    }
+}
+
+// choice diagram is traslated to the for loops 
+
+for(int i=1; i< n+1;i++)
+{
+    for(int j=1;j< C+1 ; j++)
+    {
+
+        //check wt, exlude or include it 
+
+        if(wt[i-1] <= j)
+        {
+            t[i][j]= max( val[i-1] + t[i-1][ j - wt[i-1] ] , t[i-1][j]  );
+        }
+        else 
+            t[i][j]= t[i-1][j];
+
+
+
+    }
+}
+
+
+/*
+
+Helping code to transfer memoization to tablulation dp: check the (n-1) ele , include / exclude  : and next call is to remaining n-1 elements so t[n-1] in both case. 
+              if(wt[n-1] <= C)
+                           // include ele                 //exclude 
+           return max( val[n-1] + t[n-1][C - wt[n-1]]  , t[n-1][C] );
+
+           //  only exclude
+           else return t[n-1][C];
+
+In dp code just change n with i and  C with j
+
+//*
+/
+
+
+
+
+
+cout<<"\n Net Profit is  : "<< t[n][C] ;
+cout<<endl;
+
+for(int i=0;i<n+1;i++)
+{
+    for(int j=0;j<C+1;j++)
+    {
+       
+        cout<<t[i][j]<<" ";
+    }
+    cout<<endl;
+}
+
+
+
+    return 0;
+}
+
+*/
+
+
+/*
+input 
+int n=3;
+int  wt[n]={10,20,30};
+int val[n]={60,100,120};
+int C=50;
+Sol : 220
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//______________________________________________________________________________________
+
+
+/*
+
+//dp2_memoization of knapsack
+
+int t[1001][1002];
+
+int knapsack(int wt[],int val[],int C,int n)
+{
+
+
+
+   //base cond :
+    if(n==0 || C==0 )return 0;
+
+
+       // memoization step
+
+    if(t[n][C]!=-1) return t[n][C];
+ 
+
+    //choice diagram
+
+   else if(wt[n-1] <= C) 
+    {
+       return t[n][C]= max( val[n-1] + knapsack(wt,val,C-wt[n-1],n-1)  , knapsack(wt,val,C,n-1)  );
+    }
+
+   else return t[n][C]=  knapsack(wt,val,C,n-1);
+
+}
+
+
+
+int main()
+{
+
+   memset(t,-1,sizeof(t));
+
+    int n=4; int C=7;
+  int wt[]={1,3,4,5};
+  int val[]={1,4,5,7};
+   
+
+
+
+
+   for(int i=0;i<n+1;i++)
+   {
+    for(int j=0;j<C+1;j++)
+    {
+        cout<<t[i][j]<<"  ";
+    }
+    cout<<endl;
+   }
+
+cout<<endl;
+
+
+//-----------------------------------
+  int profit=knapsack(wt,val,C,n);
+
+
+cout<<" The Maxi profit : "<<profit;
+
+
+
+cout<<endl;
+   for(int i=0;i<n+1;i++)
+   {
+    for(int j=0;j<C+1;j++)
+    {
+        cout<<t[i][j]<<"  ";
+    }
+    cout<<endl;
+   }
+
+
+
+    return 0;
+}
+
+
+*/
+
+
+
+
+/*
+
+ 
+//______________________________________________________________________________________
+
+//DP 1 knapsack : Recursive
+
+int knapsack(int wt[],int val[], int C,int n)
+{
+   //base conndition : ie samllest valid input.
+   if(n==0 || C==0) return 0;
+
+   //choice diagram : 
+
+   else if (wt[n-1] <= C)   //1. 
+   {                      //include it, and add the profit of if               //exlude it 
+     return   max( val[n-1] + knapsack(wt, val, C - wt[n-1] , n-1) ,  knapsack(wt,val,C,n-1) )      ;   //next call will be to remaining n-1 as already the current ele is considered .
+   }
+     
+   //  no choice just exclude
+   else if(wt[n-1] > C)
+    {
+        return knapsack(wt,val,C,n-1); 
+    }
+
+}
+
+
+int main()
+{
+    int n=4;
+    int C=7;
+   int wt[n]={1,3,4,5};
+   int val[n]={1,4,5,7};
+
+
+int profit=knapsack(wt,val,C,n);          //n is size if array whose ele are processd, we check from last (backward direction) as a[n-1] last ele is accessible easily.
+cout<<"Net Profit is "<<profit;
+
+
+}
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//subset sum count 
+	/*
+
+   int arr[]={2,3,5,6,8,10};
+   int sum=10;
+   int n=sizeof(arr)/sizeof(arr[0]);
+
+   cout<<"Find count  of sumset sum possible :\n";
+
+   int t[n+1][sum+1]={0};
+   
+   for(int i=0;i<n+1;i++)
+   {
+   	for(int j=0;j<sum+1;j++)
+   	 {
+
+         if(i==0)  t[i][j]=0;
+
+         if(j==0) 	t[i][j]=1;
+
+   	 }
+   }
+
+for(int i=0;i<n+1;i++)
+{
+	for(int j=0;j<sum+1;j++)
+	{
+		cout<<t[i][j]<<" ";
+	}
+	cout<<endl;
+}
+
+
+cout<<"\n::::::::::::::::::::\n";
+
+for(int i=1;i<n+1;i++)
+{
+	for(int j=1;j<sum+1;j++)
+	{
+
+     // if suitalbe -> include / exclude it
+
+       if(arr[i-1] <= j )
+       {
+       	t[i][j]=t[i-1][j-arr[i-1]] + t[i-1][j]; 
+       }
+ 
+         else      
+     // not suitable so exclude
+          {
+          	t[i][j]=t[i-1][j];
+          }
+
+	}
+}
+
+
+for(int i=0;i<n+1;i++)
+{
+	for(int j=0;j<sum+1;j++)
+	{
+		cout<<t[i][j]<<" ";
+	}
+	cout<<endl;
+}
+
+
+
+cout<<"\nTotal Count possible : \n"<<t[n][sum];
+
+
+
+	return 0;
+
+}*/
